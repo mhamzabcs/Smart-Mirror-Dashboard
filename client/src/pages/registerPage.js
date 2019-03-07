@@ -32,7 +32,7 @@ export default class Register extends Component {
 		e.preventDefault();
 		// get our form data out of state
         const { name, username, password, password2, email } = this.state;
-        axios.post('http://localhost:4000/users/register', { name, username, password, password2, email })
+        axios.post('http://apes427.herokuapp.com/users/register', { name, username, password, password2, email })
           .then((result) => {
           	if(result.data === 'User added'){
           		console.log('sab theek hai bro');

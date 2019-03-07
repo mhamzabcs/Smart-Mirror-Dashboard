@@ -18,7 +18,6 @@ export default class Facial extends Component {
 	    this.state.selectedFile,
 	    this.state.selectedFile.name
 	  )
-	  console.log(this.props.location.state.name);
 	  formData.append('username', this.props.location.state.name);
 	  console.log(formData);
 	  axios.post('http://apes427.herokuapp.com/users/upload', formData)
