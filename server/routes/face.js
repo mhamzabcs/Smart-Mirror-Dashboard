@@ -14,7 +14,7 @@ var upload = multer({ storage: storage });
 
 //recognize from live pic (use this on rpi)
 router.post('/', upload.single('file', 12),  function(req, res, next) {
-	console.log('inside recognize experimentttttt');
+	console.log('inside recognize experiment');
 	var dir = "/app/routes/" + "python/face/recognize_faces_image.py";
 	var img = "/app/routes/" + "python/face/my.png";
 	console.log(dir);

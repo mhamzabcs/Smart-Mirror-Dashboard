@@ -11,10 +11,10 @@
     "react-images-upload": "^1.2.6",
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.5",
-    "serve":"*"
+    "serve": "*"
   },
   "scripts": {
-    "start": "serve -s build",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

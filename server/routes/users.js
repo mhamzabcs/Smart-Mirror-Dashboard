@@ -17,10 +17,10 @@ cloudinary.config({
 var multer  = require('multer')
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, '/app/routes/python/face')
+    cb(null, '/app/routes/python/face/')
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname)
+    cb(null, 'my.png')
   }
 })
 var upload = multer({ storage: storage })
@@ -28,11 +28,29 @@ var upload = multer({ storage: storage })
 router.post('/upload', upload.single('file', 12),  function(req, res, next) {
 	console.log('inside upload post');
 	tags = req.body.username;
-	cloudinary.v2.uploader.upload(req.file.path, {tags: 'legolas427', width: '640'}, function(error, result) { 
-		console.log("in");
-		console.log(result, error)
-	})
-	res.send('uploaded');
+  const spawn = require("child_process").spawn;
+  var dir = "/app/routes/" + "python/face/face_check.py";
+  var img = "/app/routes/" + "python/face/my.png";
+  console.log(dir);
+  const pythonProcess = spawn('python',[dir, "--image" , img]);
+  console.log('here')
+  pythonProcess.stdout.on('data', (data) => {
+    console.log('here 2')
+    var sending = data.toString('utf8');
+    sending = sending.trim()
+    if (sending == 'face detected'){
+      console.log('face detected')
+      cloudinary.v2.uploader.upload(req.file.path, {tags: tags, width: '640'}, function(error, result) { 
+        console.log("in");
+        console.log(result, error)
+      })
+      res.send('uploaded');
+    }
+    else{
+      console.log('face not detected');
+      res.send('upload an image with a face');
+    }
+  })
 });
 
 
@@ -55,7 +73,7 @@ router.get('/train',  function(req, res, next) {
 router.post('/register', function(req, res, next) {
   console.log("In register user");
   console.log(req.body);
-  var nameRequired = 'Name required';
+    var nameRequired = 'Name required';
     var emailRequired = 'Email required';
     var emailInvalid = 'Invalid email';
     var usernameRequired = 'Username required';
@@ -69,14 +87,16 @@ router.post('/register', function(req, res, next) {
     req.checkBody('password2', passwordSame).equals(req.body.password);
     var errors = req.validationErrors();
     if (errors) {
-      console.log(errors);
+        console.log(errors);
         res.send(errors);
     }
     else{
       var newUser = new User(req.body); 
     // create User
     User.createUser(newUser, function(err,user){
-      if(err) throw err;
+      if(err) {
+        console.log(err);
+      }
     });
     res.send('User added');
     }
@@ -120,12 +140,23 @@ router.post('/setting', function(req, res, next) {
 
 router.post('/login', passport.authenticate('local', {failureRedirect:'/users/fail'}), function(req,res,next){
   console.log(req.user.name);
-  res.send('success');
+  
+  var user = {
+    name: req.user.name,
+    username: req.user.username,
+    email: req.user.email,
+    status: 'success'
+  };
+  console.log(user);
+  res.send(user);
 });
 
 router.get('/fail', function(req,res,next){
+   var user = {
+      status: 'fail'
+  }
   console.log('fail');
-  res.send('fail');
+  res.send(user);
 });
 
 passport.use(new LocalStrategy(

@@ -23,7 +23,7 @@ class WidgetSettings extends Component {
     onSubmit = (e) => {
 		e.preventDefault();
         const { w1,w2,w3,w4 } = this.state;
-        axios.post('http://apes427.herokuapp.com/users/setting', { w1,w2,w3,w4,username:this.props.location.state.name })
+        axios.post('http://apes427.herokuapp.com/users/setting', { w1,w2,w3,w4,username:'abc'})
           .then((result) => {
           	console.log(result.data);
           	this.setState({status:result.data})
@@ -55,7 +55,7 @@ class WidgetSettings extends Component {
 							<span>
 								<Link to={{
 					                pathname: '/dashboard',
-					                state: { name: this.props.location.state.name }
+					                state: { name: 'abc' }
 					        	}}> 
 					        		<button type="submit" className="btn btn-info">Go back to the dashboard</button>
 					        	</Link>
