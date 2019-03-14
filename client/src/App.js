@@ -6,6 +6,7 @@ import login from './pages/loginPage.js';
 import dashboard from './pages/dashboardPage.js';
 import widget from './pages/widgetSettings.js';
 import facial from './pages/facialSettings.js';
+import logout from './pages/logoutPage.js'
 
 class App extends Component { 
   render() {
@@ -18,6 +19,7 @@ class App extends Component {
             <Route path="/dashboard" component={dashboard}/>
             <Route path="/widget" component={widget}/>
             <Route path="/facial" component={facial}/>
+            <Route path="/logout" component={logout}/>
           </Switch>
         </Router>  
     );

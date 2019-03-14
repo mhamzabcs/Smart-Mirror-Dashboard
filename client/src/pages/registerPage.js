@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import {Redirect} from 'react-router-dom';
+import {Link, Redirect} from 'react-router-dom';
+
 
 export default class Register extends Component {
 
@@ -12,55 +13,57 @@ export default class Register extends Component {
           password: '',
           password2: '',
           email: '',
+          localStatus: '',
           errorList: [],
-          status: '',
-          home: false
         }
 	}
-	onClick = () => {
-		console.log('clicked');
-        this.setState({home: true});
-    }
+
+	componentDidMount(){
+		this.sessionSet();
+	}
+
 	onChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     }
+
 	onSubmit = (e) => {
-		this.setState({
-			errorList: [],
-			status: ''
-		});	
+		this.setState({ errorList: [] });
 		e.preventDefault();
 		// get our form data out of state
         const { name, username, password, password2, email } = this.state;
         axios.post('http://apes427.herokuapp.com/users/register', { name, username, password, password2, email })
           .then((result) => {
-          	if(result.data === 'User added'){
-          		console.log('sab theek hai bro');
-          		this.setState({
-					status: result.data
-				});
+          	
+          	localStorage.setItem('userStatus', result.data);
+          	
+          	if(result.data === 'success'){
+          		localStorage.setItem('userName', username);
+          		this.sessionSet();
           	}
+
           	else{
-          		this.setState({
-					errorList: result.data
-				});	
-          	}
+          		this.setState({ errorList: result.data });
+          	} 
+
          });
 	}
-	back(){
-    	if(this.state.home){
-    		return <Redirect to='/' />;
-    	}
-    }
+
+	sessionSet(){
+		this.setState(
+      	{
+      		localStatus : localStorage.getItem('userStatus')
+      	}) 
+	}
+
 	generateSuccessTemp(){
-		if(this.state.status === 'User added'){
+		if(this.state.localStatus === 'success'){
 			console.log('temp success');
 			return (<Redirect to={{
-                pathname: '/dashboard',
-                state: { name: this.state.username }
+                pathname: '/dashboard'
             }} />)
 		}
     }
+
 	generateErrorList(){
 		if(this.state.errorList[0]){
 			console.log('in generateErrorList')
@@ -69,13 +72,17 @@ export default class Register extends Component {
         	});
 		}
     }
+
 	render() {
 		return (
 
 		<div className='container'>
 			
-			<h2 className="portalHeading" onClick={this.onClick}>Smart Mirror Portal</h2>
-			<div> {this.back()} </div>	
+			<Link to={{
+		                pathname: '/'
+            }}>
+				<button className='btn' style={{backgroundColor:'transparent'}}><h2 className="portalHeading">Smart Mirror Portal</h2></button>
+			</Link>
 			<h2 className="headingAccount">Create Your Account</h2>
 			
 			<form onSubmit={this.onSubmit} >

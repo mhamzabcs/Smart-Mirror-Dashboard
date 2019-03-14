@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import {Link} from 'react-router-dom'
+import {Redirect, Link} from 'react-router-dom'
 
+let localName = '';
 
 export default class Facial extends Component {
 	constructor(props) {
 		super(props);
 		this.state = { selectedFile: null, name:'Select a Picture' };
+		localName = localStorage.getItem('userName')
 	}
 	fileChangedHandler = event => {
 	  this.setState({ selectedFile: event.target.files[0], name: event.target.files[0].name })
@@ -26,34 +28,63 @@ export default class Facial extends Component {
 	  	})
 	}
 	render() {
+
+		if (!localName){
+  			console.log('in if')
+			return <Redirect to='/login'/>
+		}
+
 		return (
-			<div className='container-fluid'>
+			
+			<div className='middleAll'>
+			 	
+			 	<div className='container-fluid'>	
+					<div className='row'>
 
-				<Link to={{
-		            pathname: '/dashboard',
-	                state: { name: this.props.location.state.name }
-		        }}> 
-		        	<img width='5%' src={require('../h.png')} /> 
-		        </Link>
+						<h2 className="col-8 offset-2" id="theHeading">Facial Settings</h2>
 
-				<div className='middleAll'>
-				 	
-				 	<h2 className="theHeading">Facial Settings</h2>
+						<div className="col-2">
+							<Link  to={{
+				            	pathname: '/logout'
+			       	 		}}> 
+				       	 		<button className='btn' style={{backgroundColor:'transparent'}}>
+				       	 			<h4 className="portalHeading">
+				       	 				Logout
+				       	 				<span> <img width='15%' src={require('../lgo.png')} /> </span>
+				       	 			</h4>
+				       	 		</button>	
+							</Link>
+						</div>
 
-				 	<div className='form'>
-					  <div className="custom-file">
-					    <input type="file" className="custom-file-input" id="customFile" onChange={this.fileChangedHandler}/>
-					    <label className="custom-file-label" htmlFor="customFile">{this.state.name}</label>
-					  </div>
-					</div>
+					</div> 
+				</div>
 
-					<br/><br/>
+			 	<div className='form'>
+				  <div className="custom-file">
+				    <input type="file" className="custom-file-input" id="customFile" onChange={this.fileChangedHandler}/>
+				    <label className="custom-file-label" htmlFor="customFile">{this.state.name}</label>
+				  </div>
+				</div>
 
-					<button onClick={this.uploadHandler}  className='btn btn-primary'>Upload!</button>				
-					
-	            </div>
+				<br/><br/>
 
+				<span>
+					<button onClick={this.uploadHandler}  className='btn btn-primary'>Upload!</button>
+				</span>
+
+				<span> or </span>
+							
+				<span>
+					<Link to={{
+		                pathname: '/dashboard'
+		        	}}> 
+		        		<button className="btn btn-danger">Go back to the dashboard</button>
+		        	</Link>
+		        </span>				
+				
             </div>
+
+           
 		)
 	}
 }

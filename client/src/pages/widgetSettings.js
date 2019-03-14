@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import '../App.css';
 import axios from 'axios';
-import {Link} from 'react-router-dom'
+import {Redirect, Link} from 'react-router-dom'
+
+let localName = '';
 
 class WidgetSettings extends Component {
   
@@ -14,6 +16,7 @@ class WidgetSettings extends Component {
   			w4:'Youtube Player',
   			status:''
   		 };
+  		localName = localStorage.getItem('userName')
 	}
 
 	onChange = (e) => {
@@ -29,22 +32,50 @@ class WidgetSettings extends Component {
           	this.setState({status:result.data})
          });
     }
+
     onSuccess(){
 		if(this.state.status === 'User added'){
 			return <p>Changes Successfully Applied</p>
 		}
-    }  
+    }
+
 	render() {
+
+		if (!localName){
+  			console.log('in if')
+			return <Redirect to='/login'/>
+		}
 		
 		return (
 				
 				<div className='container-fluid'>
 
-					<h2 className="settingHeading">Smart Mirror Settings</h2>
+						
+					<div className='row'>
+
+						<h2 className="col-8 offset-2" id="settingHeading">Smart Mirror Settings</h2>
+
+						<div className="col-2">
+							<Link  to={{
+				            	pathname: '/logout'
+			       	 		}}> 
+				       	 		<button className='btn' style={{backgroundColor:'transparent'}}>
+				       	 			<h4 className="portalHeading">
+				       	 				Logout
+				       	 				<span> <img width='15%' src={require('../lgo.png')} /> </span>
+				       	 			</h4>
+				       	 		</button>	
+							</Link>
+						</div>
+
+					</div> 
+					
 
 					<form onSubmit={this.onSubmit} >
 
 						<div className="absoluteMiddle">
+							
+							<br/>
 							
 							<span>
 								<button type="submit" className="btn btn-success">Apply Changes!</button>
@@ -54,10 +85,9 @@ class WidgetSettings extends Component {
 							
 							<span>
 								<Link to={{
-					                pathname: '/dashboard',
-					                state: { name: this.props.location.state.name }
+					                pathname: '/dashboard'
 					        	}}> 
-					        		<button type="submit" className="btn btn-info">Go back to the dashboard</button>
+					        		<button className="btn btn-info">Go back to the dashboard</button>
 					        	</Link>
 					        </span>
 

@@ -98,7 +98,7 @@ router.post('/register', function(req, res, next) {
         console.log(err);
       }
     });
-    res.send('User added');
+    res.send('success');
     }
 });
 

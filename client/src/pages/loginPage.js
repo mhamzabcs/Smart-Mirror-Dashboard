@@ -2,68 +2,71 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import {Redirect, Link} from 'react-router-dom';
 
+
 export default class Login extends Component {
 
-  constructor(props) {
+  	constructor(props) {
 		super(props);
 		this.state = {
           username: '',
           password: '',
-          status: '',
-          home: false
-        };
+          localStatus: '',
+        }
 	}
-	onClick = () => {
-		console.log('clicked');
-        this.setState({home: true});
-    }
+
+	componentDidMount(){
+		console.log('yo')
+		this.sessionSet();
+	}
 	onChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     }
 	onSubmit = (e) => {
-		this.setState({
-			status: ''
-		});	
 		e.preventDefault();
         const { username, password } = this.state;
         axios.post('http://apes427.herokuapp.com/users/login', { username, password })
           .then((result) => {
           	console.log(result.data);
-          	if(result.data === 'success'){
-          		this.setState({
-					status: result.data
-				});
+          	let user = result.data;
+
+          	localStorage.setItem('userStatus', user.status);
+          	if(user.status === 'success'){
+          		localStorage.setItem('userName', user.username);
           	}
-          	else{
-          		this.setState({
-					status: result.data
-				});
-          	}
+
+          	this.sessionSet();  	
+
          });
 	}
-	back(){
-    	if(this.state.home){
-    		return <Redirect to='/' />;
-    	}
-    }
+
+	sessionSet(){
+		this.setState(
+      	{
+      		localStatus : localStorage.getItem('userStatus')
+      	}) 
+	}
+
 	generateSuccessTemp(){
-		if(this.state.status === 'success'){
+		if(this.state.localStatus === 'success'){
 			console.log('logged in')
 			return (<Redirect to={{
-                pathname: '/dashboard',
-                state: { name: this.state.username }
+                pathname: '/dashboard'
             }} />)
 		}
-		else if (this.state.status === 'fail'){
+		else if(this.state.localStatus === 'fail'){
 			return <div> <br/><p>Invalid username or password</p> </div>;	
 		}
     }
+
 	render() {
 		return (
 			<div className="container">
 					
-					<h2 className="portalHeading" onClick={this.onClick}>Smart Mirror Portal</h2>
-					<div> {this.back()} </div>
+					<Link to={{
+		                pathname: '/'
+		            }}>
+						<button className='btn' style={{backgroundColor:'transparent'}}><h2 className="portalHeading">Smart Mirror Portal</h2></button>
+					</Link>
 					<h2 className="headingAccount">Login to Your Account</h2>
 					
 					<form onSubmit={this.onSubmit} >
