@@ -44,11 +44,11 @@ router.post('/upload', upload.single('file', 12),  function(req, res, next) {
         console.log("in");
         console.log(result, error)
       })
-      res.send('uploaded');
+      res.send('Image Successfully Uploaded');
     }
     else{
       console.log('face not detected');
-      res.send('upload an image with a face');
+      res.send('Face not detected, upload an image with a face');
     }
   })
 });

@@ -5,14 +5,21 @@ import {Redirect, Link} from 'react-router-dom'
 let localName = '';
 
 export default class Facial extends Component {
+
 	constructor(props) {
 		super(props);
-		this.state = { selectedFile: null, name:'Select a Picture' };
+		this.state = { 
+			selectedFile: null, 
+			name:'Select a Picture',
+			status:'',
+		}
 		localName = localStorage.getItem('userName')
 	}
+
 	fileChangedHandler = event => {
 	  this.setState({ selectedFile: event.target.files[0], name: event.target.files[0].name })
 	}
+
 	uploadHandler = () => {
 	  const formData = new FormData()
 	  formData.append(
@@ -20,13 +27,15 @@ export default class Facial extends Component {
 	    this.state.selectedFile,
 	    this.state.selectedFile.name
 	  )
-	  formData.append('username', this.props.location.state.name);
+	  formData.append('username', localName);
 	  console.log(formData);
-	  axios.post('http://apes427.herokuapp.com/users/upload', formData)
+	  axios.post('http://localhost:4000/users/upload', formData)
 	  	.then((result) => {
 	  		console.log(result.data);
+	  		this.setState({ status: result.data});
 	  	})
 	}
+
 	render() {
 
 		if (!localName){
@@ -50,7 +59,7 @@ export default class Facial extends Component {
 				       	 		<button className='btn' style={{backgroundColor:'transparent'}}>
 				       	 			<h4 className="portalHeading">
 				       	 				Logout
-				       	 				<span> <img width='15%' src={require('../lgo.png')} /> </span>
+				       	 				<span> <img width='15%' alt="img" src={require('../lgo.png')} /> </span>
 				       	 			</h4>
 				       	 		</button>	
 							</Link>
@@ -80,6 +89,10 @@ export default class Facial extends Component {
 		        	}}> 
 		        		<button className="btn btn-danger">Go back to the dashboard</button>
 		        	</Link>
+		        </span>
+
+		        <span>
+		        	<p>{this.state.status}</p>
 		        </span>				
 				
             </div>

@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import {Redirect, Link} from 'react-router-dom';
+import {Link} from 'react-router-dom';
+import history from '../history';
 
+let localStatus = '';
 
 export default class Login extends Component {
 
@@ -10,17 +12,21 @@ export default class Login extends Component {
 		this.state = {
           username: '',
           password: '',
-          localStatus: '',
+          error: '',
         }
+        localStatus = localStorage.getItem('userStatus');
 	}
 
 	componentDidMount(){
-		console.log('yo')
-		this.sessionSet();
+		if(localStatus === 'success'){
+			this.generateSuccessTemp();
+		}
 	}
+	
 	onChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     }
+
 	onSubmit = (e) => {
 		e.preventDefault();
         const { username, password } = this.state;
@@ -30,32 +36,27 @@ export default class Login extends Component {
           	let user = result.data;
 
           	localStorage.setItem('userStatus', user.status);
+          	
           	if(user.status === 'success'){
           		localStorage.setItem('userName', user.username);
+          		this.generateSuccessTemp();
           	}
 
-          	this.sessionSet();  	
+          	else{
+          		this.generateError();
+          	}
 
          });
 	}
 
-	sessionSet(){
-		this.setState(
-      	{
-      		localStatus : localStorage.getItem('userStatus')
-      	}) 
-	}
 
 	generateSuccessTemp(){
-		if(this.state.localStatus === 'success'){
-			console.log('logged in')
-			return (<Redirect to={{
-                pathname: '/dashboard'
-            }} />)
-		}
-		else if(this.state.localStatus === 'fail'){
-			return <div> <br/><p>Invalid username or password</p> </div>;	
-		}
+		console.log('logged in')
+		history.push('/dashboard')
+    }
+
+    generateError(){
+		this.setState({ error : 'Invalid username or password'})	
     }
 
 	render() {
@@ -81,7 +82,9 @@ export default class Login extends Component {
 						<button type="submit" className="btn btn-success">Login</button>
 					</form>
 
-					<div className='errors'> {this.generateSuccessTemp()} </div>
+					<br/>
+
+					<div className='errors'> <p>{this.state.error}</p> </div>
 					
 			</div>
 

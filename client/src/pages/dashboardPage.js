@@ -36,7 +36,7 @@ class Dashboard extends Component {
 				       	 		<button className='btn' style={{backgroundColor:'transparent'}}>
 				       	 			<h4 className="portalHeading">
 				       	 				Logout
-				       	 				<span> <img width='15%' src={require('../lgo.png')} /> </span>
+				       	 				<span> <img width='15%' alt="img" src={require('../lgo.png')} /> </span>
 				       	 			</h4>
 				       	 		</button>	
 							</Link>
@@ -47,8 +47,7 @@ class Dashboard extends Component {
 			
 				<span>
 					<Link to={{
-		                pathname: '/widget',
-		                state: { name: localName }
+		                pathname: '/widget'
 		            }}>
 						<button type="button" className="btn btn-success" >Widget Settings</button>
 					</Link>
@@ -58,8 +57,7 @@ class Dashboard extends Component {
 				
 				<span>
 					<Link to={{
-		                pathname: '/facial',
-		                state: { name: localName }
+		                pathname: '/facial'
 		            }}>
 						<button type="button" className="btn btn-success">Facial Settings</button>
 					</Link>

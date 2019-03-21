@@ -15,18 +15,18 @@ class WidgetSettings extends Component {
   			w3:'Reminders',
   			w4:'Youtube Player',
   			status:''
-  		 };
+  		}
   		localName = localStorage.getItem('userName')
 	}
 
 	onChange = (e) => {
         this.setState({ [e.target.id]: e.target.value });
-      }
+    }
 
     onSubmit = (e) => {
 		e.preventDefault();
         const { w1,w2,w3,w4 } = this.state;
-        axios.post('http://apes427.herokuapp.com/users/setting', { w1,w2,w3,w4,username:this.props.location.state.name })
+        axios.post('http://apes427.herokuapp.com/users/setting', { w1,w2,w3,w4,username:localName })
           .then((result) => {
           	console.log(result.data);
           	this.setState({status:result.data})
@@ -62,7 +62,7 @@ class WidgetSettings extends Component {
 				       	 		<button className='btn' style={{backgroundColor:'transparent'}}>
 				       	 			<h4 className="portalHeading">
 				       	 				Logout
-				       	 				<span> <img width='15%' src={require('../lgo.png')} /> </span>
+				       	 				<span> <img width='15%' alt="img" src={require('../lgo.png')} /> </span>
 				       	 			</h4>
 				       	 		</button>	
 							</Link>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Switch, BrowserRouter as Router, Route } from 'react-router-dom';
+import { Switch, Router, Route } from 'react-router-dom';
+import history from './history';
 import landing from './pages/landingPage.js';
 import register from './pages/registerPage.js';
 import login from './pages/loginPage.js';
@@ -11,7 +12,7 @@ import logout from './pages/logoutPage.js'
 class App extends Component { 
   render() {
     return (
-        <Router>
+        <Router history={history}>
           <Switch>
             <Route exact path="/" component={landing}/>
             <Route path="/register" component={register}/>

@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import {Link, Redirect} from 'react-router-dom';
+import {Link} from 'react-router-dom';
+import history from '../history';
+
+let localStatus = '';
 
 
 export default class Register extends Component {
@@ -13,13 +16,15 @@ export default class Register extends Component {
           password: '',
           password2: '',
           email: '',
-          localStatus: '',
           errorList: [],
         }
+        localStatus = localStorage.getItem('userStatus');
 	}
 
 	componentDidMount(){
-		this.sessionSet();
+		if(localStatus === 'success'){
+			this.generateSuccessTemp();
+		}
 	}
 
 	onChange = (e) => {
@@ -29,39 +34,28 @@ export default class Register extends Component {
 	onSubmit = (e) => {
 		this.setState({ errorList: [] });
 		e.preventDefault();
-		// get our form data out of state
         const { name, username, password, password2, email } = this.state;
-        axios.post('http://apes427.herokuapp.com/users/register', { name, username, password, password2, email })
+        axios.post('http://apes427.herokuapp.com/register', { name, username, password, password2, email })
           .then((result) => {
           	
           	localStorage.setItem('userStatus', result.data);
           	
           	if(result.data === 'success'){
           		localStorage.setItem('userName', username);
-          		this.sessionSet();
+          		this.generateSuccessTemp();
           	}
 
           	else{
+          		console.log('errors');
           		this.setState({ errorList: result.data });
           	} 
 
          });
 	}
 
-	sessionSet(){
-		this.setState(
-      	{
-      		localStatus : localStorage.getItem('userStatus')
-      	}) 
-	}
-
 	generateSuccessTemp(){
-		if(this.state.localStatus === 'success'){
-			console.log('temp success');
-			return (<Redirect to={{
-                pathname: '/dashboard'
-            }} />)
-		}
+		console.log('temp success');
+		history.push('/dashboard');
     }
 
 	generateErrorList(){
@@ -110,8 +104,6 @@ export default class Register extends Component {
 			</form>
 
 			<div className='errors'> {this.generateErrorList()} </div>
-
-			{this.generateSuccessTemp()}
 			
 		</div>
 
