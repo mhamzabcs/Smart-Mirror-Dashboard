@@ -3,7 +3,7 @@ var router = express.Router();
 
 router.get('/wakeup', function(req, res, next) {
 	console.log('WAKING UP');
-	res.send("WAKEUP");
+	res.status(200).send("WAKEUP");
 });
 
 

@@ -44,11 +44,11 @@ router.post('/upload', upload.single('file', 12),  function(req, res, next) {
         console.log("in");
         console.log(result, error)
       })
-      res.send('Image Successfully Uploaded');
+      res.status(200).send('uploaded');
     }
     else{
       console.log('face not detected');
-      res.send('Face not detected, upload an image with a face');
+      res.status(200).send('upload an image with a face');
     }
   })
 });
@@ -66,7 +66,7 @@ router.get('/train',  function(req, res, next) {
 		var sending = data.toString('utf8');
 		sending = sending.trim()
 		console.log('data = ' + sending)
-		res.json(sending);
+		res.status(200).json(sending);
 	})
 });
 
@@ -98,7 +98,7 @@ router.post('/register', function(req, res, next) {
         console.log(err);
       }
     });
-    res.send('success');
+    res.status(200).send('User added');
     }
 });
 
@@ -120,6 +120,7 @@ router.post('/setting', function(req, res, next) {
         w3: req.body.w3, 
         w4: req.body.w4
       })
+      res.status(200).send('User setting added');
     }
     else{
       console.log('settings for this user exist');
@@ -132,9 +133,9 @@ router.post('/setting', function(req, res, next) {
         w3: req.body.w3, 
         w4: req.body.w4
       })
+      res.status(200).send('User setting modified');
     }
   })
-  res.send('User added');
 });
 
 
@@ -148,7 +149,7 @@ router.post('/login', passport.authenticate('local', {failureRedirect:'/users/fa
     status: 'success'
   };
   console.log(user);
-  res.send(user);
+  res.status(200).send(user);
 });
 
 router.get('/fail', function(req,res,next){

@@ -29,7 +29,7 @@ export default class Facial extends Component {
 	  )
 	  formData.append('username', localName);
 	  console.log(formData);
-	  axios.post('http://localhost:4000/users/upload', formData)
+	  axios.post('http://apes427.herokuapp.com/users/upload', formData)
 	  	.then((result) => {
 	  		console.log(result.data);
 	  		this.setState({ status: result.data});

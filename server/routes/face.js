@@ -25,9 +25,8 @@ router.post('/', upload.single('file', 12),  function(req, res, next) {
 		var sending = data.toString('utf8');
 		sending = sending.trim()
 		console.log(sending);
-		res.json(sending);
+		res.status(200).json(sending);
 	});
-
 });
 
 //nothing much really
@@ -44,9 +43,8 @@ router.get('/test',  function(req, res, next) {
 		var sending = data.toString('utf8');
 		sending = sending.trim()
 		console.log(sending);
-		res.json(sending);
+		res.status(200).json(sending);
 	});
-
 });
 
 
