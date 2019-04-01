@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import '../App.css';
 import axios from 'axios';
-import {Redirect, Link} from 'react-router-dom'
+import {Redirect, Link} from 'react-router-dom';
+import Loader from '../components/Loader';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 let localName = '';
 
@@ -14,7 +16,9 @@ class WidgetSettings extends Component {
   			w2:'Date And Time',
   			w3:'Reminders',
   			w4:'Youtube Player',
-  			status:''
+  			status:'',
+  			isloading:false,
+  			alert:false,
   		}
   		localName = localStorage.getItem('userName')
 	}
@@ -25,18 +29,13 @@ class WidgetSettings extends Component {
 
     onSubmit = (e) => {
 		e.preventDefault();
+		this.setState({isloading:true});
         const { w1,w2,w3,w4 } = this.state;
         axios.post('http://apes427.herokuapp.com/users/setting', { w1,w2,w3,w4,username:localName })
           .then((result) => {
           	console.log(result.data);
-          	this.setState({status:result.data})
+          	this.setState({status:result.data, isloading:false, alert:true})
          });
-    }
-
-    onSuccess(){
-		if(this.state.status === 'User added'){
-			return <p>Changes Successfully Applied</p>
-		}
     }
 
 	render() {
@@ -91,7 +90,7 @@ class WidgetSettings extends Component {
 					        	</Link>
 					        </span>
 
-							<span> <h6> {this.onSuccess()} </h6> </span>
+					        <SweetAlert success title={this.state.status} show={this.state.alert} onConfirm={()=>this.setState({alert:false})}/>
 
 						</div>
 
@@ -157,6 +156,8 @@ class WidgetSettings extends Component {
 						</div>
 
 					</form>
+
+					<Loader isloading={this.state.isloading}/>
 
 				</div>
 					

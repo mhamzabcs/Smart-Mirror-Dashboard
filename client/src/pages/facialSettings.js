@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import {Redirect, Link} from 'react-router-dom'
+import {Redirect, Link} from 'react-router-dom';
+import Loader from '../components/Loader';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 let localName = '';
 
@@ -12,6 +14,9 @@ export default class Facial extends Component {
 			selectedFile: null, 
 			name:'Select a Picture',
 			status:'',
+			isloading:false,
+			alert1:false,
+			alert2:false,
 		}
 		localName = localStorage.getItem('userName')
 	}
@@ -21,6 +26,7 @@ export default class Facial extends Component {
 	}
 
 	uploadHandler = () => {
+	  this.setState({isloading:true});
 	  const formData = new FormData()
 	  formData.append(
 	    'file',
@@ -32,7 +38,13 @@ export default class Facial extends Component {
 	  axios.post('http://apes427.herokuapp.com/users/upload', formData)
 	  	.then((result) => {
 	  		console.log(result.data);
-	  		this.setState({ status: result.data});
+	  		if(result.data === 'Image Successfully Uploaded'){
+	  			this.setState({alert1: true});	
+	  		}
+	  		else{
+	  			this.setState({alert2: true});
+	  		}
+	  		this.setState({status:result.data, isloading:false});
 	  	})
 	}
 
@@ -91,9 +103,11 @@ export default class Facial extends Component {
 		        	</Link>
 		        </span>
 
-		        <span>
-		        	<p>{this.state.status}</p>
-		        </span>				
+		        <SweetAlert success title={this.state.status} show={this.state.alert1} onConfirm={()=>this.setState({alert1:false})}/>
+
+		        <SweetAlert danger title={this.state.status} show={this.state.alert2} onConfirm={()=>this.setState({alert2:false})}/>
+
+		        <Loader isloading={this.state.isloading}/>				
 				
             </div>
 

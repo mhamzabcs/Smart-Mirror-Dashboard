@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import {Link} from 'react-router-dom';
 import history from '../history';
+import Loader from '../components/Loader';
 
 let localStatus = '';
 
@@ -13,6 +14,7 @@ export default class Login extends Component {
           username: '',
           password: '',
           error: '',
+          isloading:false
         }
         localStatus = localStorage.getItem('userStatus');
 	}
@@ -29,12 +31,13 @@ export default class Login extends Component {
 
 	onSubmit = (e) => {
 		e.preventDefault();
+		this.setState({isloading : true});
         const { username, password } = this.state;
         axios.post('http://apes427.herokuapp.com/users/login', { username, password })
           .then((result) => {
           	console.log(result.data);
           	let user = result.data;
-
+          	this.setState({isloading : false});
           	localStorage.setItem('userStatus', user.status);
           	
           	if(user.status === 'success'){
@@ -85,6 +88,8 @@ export default class Login extends Component {
 					<br/>
 
 					<div className='errors'> <p>{this.state.error}</p> </div>
+
+					<Loader isloading={this.state.isloading}/>
 					
 			</div>
 

@@ -44,11 +44,11 @@ router.post('/upload', upload.single('file', 12),  function(req, res, next) {
         console.log("in");
         console.log(result, error)
       })
-      res.status(200).send('uploaded');
+      res.status(200).send('Image Successfully Uploaded');
     }
     else{
       console.log('face not detected');
-      res.status(200).send('upload an image with a face');
+      res.status(200).send('Face not detected, upload an image with a face');
     }
   })
 });
@@ -88,7 +88,7 @@ router.post('/register', function(req, res, next) {
     var errors = req.validationErrors();
     if (errors) {
         console.log(errors);
-        res.send(errors);
+        res.status(200).send(errors);
     }
     else{
       var newUser = new User(req.body); 
@@ -98,7 +98,7 @@ router.post('/register', function(req, res, next) {
         console.log(err);
       }
     });
-    res.status(200).send('User added');
+    res.status(200).send('success');
     }
 });
 
@@ -120,7 +120,7 @@ router.post('/setting', function(req, res, next) {
         w3: req.body.w3, 
         w4: req.body.w4
       })
-      res.status(200).send('User setting added');
+      res.status(200).send('Your setting has been created');
     }
     else{
       console.log('settings for this user exist');
@@ -133,7 +133,7 @@ router.post('/setting', function(req, res, next) {
         w3: req.body.w3, 
         w4: req.body.w4
       })
-      res.status(200).send('User setting modified');
+      res.status(200).send('Your setting has been modified');
     }
   })
 });
@@ -157,7 +157,7 @@ router.get('/fail', function(req,res,next){
       status: 'fail'
   }
   console.log('fail');
-  res.send(user);
+  res.status(200).send(user);
 });
 
 passport.use(new LocalStrategy(

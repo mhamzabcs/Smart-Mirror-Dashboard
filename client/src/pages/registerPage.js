@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import {Link} from 'react-router-dom';
 import history from '../history';
+import Loader from '../components/Loader';
 
 let localStatus = '';
 
@@ -17,6 +18,7 @@ export default class Register extends Component {
           password2: '',
           email: '',
           errorList: [],
+          isloading:false
         }
         localStatus = localStorage.getItem('userStatus');
 	}
@@ -34,10 +36,11 @@ export default class Register extends Component {
 	onSubmit = (e) => {
 		this.setState({ errorList: [] });
 		e.preventDefault();
+		this.setState({isloading : true});
         const { name, username, password, password2, email } = this.state;
-        axios.post('http://apes427.herokuapp.com/register', { name, username, password, password2, email })
+        axios.post('http://apes427.herokuapp.com/users/register', { name, username, password, password2, email })
           .then((result) => {
-          	
+          	this.setState({isloading : false});
           	localStorage.setItem('userStatus', result.data);
           	
           	if(result.data === 'success'){
@@ -104,6 +107,8 @@ export default class Register extends Component {
 			</form>
 
 			<div className='errors'> {this.generateErrorList()} </div>
+
+			<Loader isloading={this.state.isloading}/>
 			
 		</div>
 
