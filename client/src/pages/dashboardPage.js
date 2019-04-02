@@ -1,24 +1,28 @@
 import React, { Component } from 'react';
 import '../App.css';
 import {Redirect, Link} from 'react-router-dom'
-
-let localName = '';
+import history from '../history';
+let localName = null;
 
 
 class Dashboard extends Component {
 
 	constructor(props) {
 		super(props);
-		localName = localStorage.getItem('userName')
 	}
-  
-
+  	
+  	componentDidMount(){
+  		localName = localStorage.getItem('userName')
+  		if (!localName){
+  			console.log(localName);
+  			console.log('in if')
+			history.push('/login');
+		}
+  	}
+  	
 	render() {
 		
-		if (!localName){
-  			console.log('in if')
-			return <Redirect to='/login'/>
-		}
+		
 
 		return (
 				

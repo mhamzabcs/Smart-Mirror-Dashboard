@@ -6,8 +6,8 @@ export default class Loader extends Component {
 
 	loading(){
 	    if(this.props.isloading){
-	      return  <div class="loading">
-	                <div class="loader"></div>
+	      return  <div className="loading">
+	                <div className="loader"></div>
 	              </div>
 	    }
 	}
