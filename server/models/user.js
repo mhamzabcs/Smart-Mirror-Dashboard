@@ -7,7 +7,9 @@ const UserSchema = mongoose.Schema({
         required: true
     },
     username: {
-        type: String
+        type: String,
+        unique: true,
+        required:true
     },
     email: {
         type: String,
@@ -45,6 +47,8 @@ module.exports.createUser =  function(newUser, callback){
         // Set hashed password
         newUser.password = hash;
         //create user
+        console.log('idhar')
         newUser.save(callback);
+        console.log('udhar')
     });
 }

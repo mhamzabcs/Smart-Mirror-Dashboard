@@ -38,11 +38,10 @@ export default class Register extends Component {
 		e.preventDefault();
 		this.setState({isloading : true});
         const { name, username, password, password2, email } = this.state;
-        axios.post('http://apes427.herokuapp.com/users/register', { name, username, password, password2, email })
+        axios.post('http://localhost:4000/users/register', { name, username, password, password2, email })
           .then((result) => {
           	this.setState({isloading : false});
-          	localStorage.setItem('userStatus', result.data);
-          	
+			console.log(result);          	
           	if(result.data === 'success'){
           		localStorage.setItem('userName', username);
           		this.generateSuccessTemp();
@@ -64,6 +63,7 @@ export default class Register extends Component {
 	generateErrorList(){
 		if(this.state.errorList[0]){
 			console.log('in generateErrorList')
+			console.log(this.state.errorList);
 			return this.state.errorList.map(function(object, i){
             	return <span obj={object} key={i}> {object.msg} </span>;
         	});

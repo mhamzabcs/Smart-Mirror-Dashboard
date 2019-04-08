@@ -9,6 +9,7 @@ var cors = require('cors');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var faceRouter = require('./routes/face');
+var User = require('./models/user');
 
 require('dotenv').config();
 
@@ -31,35 +32,52 @@ app.use(passport.session());
 
 app.use(cors());
 
-// validator 
 app.use(expressValidator({
-  errorFormatter: function(param, msg, value) {
-      var namespace = param.split('.')
-      , root    = namespace.shift()
-      , formParam = root;
-
-    while(namespace.length) {
-      formParam += '[' + namespace.shift() + ']';
+  customValidators: {
+    usernameExistsAsync: async function (value) {
+      var user = await Users.find({ username: value })
+      return user.length == 0;
+    },
+    usernameExistsPromise: function (value) {
+      Users.find({ username: value })
+        .then(function (result) {
+          return result.length == 0
+        })
+        .catch(function (err) { console.log(err) })
     }
-    return {
-      param : formParam,
-      msg   : msg,
-      value : value
-    };
   }
-}));
+})
+)
 
-app.use(function(req,res,next){
+// // validator 
+// app.use(expressValidator({
+//   errorFormatter: function(param, msg, value) {
+//       var namespace = param.split('.')
+//       , root    = namespace.shift()
+//       , formParam = root;
+
+//     while(namespace.length) {
+//       formParam += '[' + namespace.shift() + ']';
+//     }
+//     return {
+//       param : formParam,
+//       msg   : msg,
+//       value : value
+//     };
+//   }
+// }));
+
+app.use(function (req, res, next) {
   req.db = db;
   next();
 });
 
 app.use(expressValidator({
- customValidators: {
-    gte: function(param, num) {
-        return param >= num;
+  customValidators: {
+    gte: function (param, num) {
+      return param >= num;
     }
- }
+  }
 }));
 
 
@@ -72,19 +90,9 @@ app.use('/users', usersRouter);
 app.use('/face', faceRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
 
 module.exports = app;
