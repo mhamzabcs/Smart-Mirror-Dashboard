@@ -38,7 +38,7 @@ export default class Register extends Component {
 		e.preventDefault();
 		this.setState({isloading : true});
         const { name, username, password, password2, email } = this.state;
-        axios.post('http://localhost:4000/users/register', { name, username, password, password2, email })
+        axios.post('http://apes427.herokuapp.com/users/register', { name, username, password, password2, email })
           .then((result) => {
           	this.setState({isloading : false});
 			console.log(result);          	

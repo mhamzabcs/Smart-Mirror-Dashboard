@@ -1,3 +1,6 @@
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -9,6 +12,8 @@ var cors = require('cors');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var faceRouter = require('./routes/face');
+var mobileRouter = require('./routes/mobile');
+
 var User = require('./models/user');
 
 require('dotenv').config();
@@ -23,12 +28,10 @@ const options = {
 };
 mongoose.connect('mongodb://legolas427:proton27@ds127429.mlab.com:27429/mine', options);
 
-
-var app = express();
-
 app.use(logger('dev'));
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 app.use(cors());
 
@@ -48,6 +51,11 @@ app.use(expressValidator({
   }
 })
 )
+
+app.use(function(req,res, next){
+	req.io = io;
+	next();
+});
 
 // // validator 
 // app.use(expressValidator({
@@ -88,11 +96,15 @@ app.use(cookieParser());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/face', faceRouter);
+app.use('/mobile', mobileRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
 });
 
+app.set('port', (process.env.PORT || 5000));
 
-module.exports = app;
+http.listen(app.get('port'), function(){
+	console.log('listening on port');
+});
