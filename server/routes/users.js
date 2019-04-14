@@ -41,10 +41,17 @@ router.post('/upload', upload.single('file', 12), function (req, res, next) {
 		if (sending == 'face detected') {
 			console.log('face detected')
 			cloudinary.v2.uploader.upload(req.file.path, { tags: tags, width: '640' }, function (error, result) {
-				console.log("in");
-				console.log(result, error)
 			})
 			res.status(200).send('Image Successfully Uploaded');
+
+			//training
+			var dir = "/app/routes/" + "python/face/new_encode.py";
+			const spawn = require("child_process").spawn;
+			const pythonProcess = spawn('python', [dir]);
+
+		}
+		else if (sending == 'multiple faces detected'){
+			res.status(200).send('Multiple person detected, upload an image with a single person');
 		}
 		else {
 			console.log('face not detected');
@@ -108,7 +115,7 @@ router.post('/register', function (req, res, next) {
 				res.status(200).send(errors);
 			}
 			else {
-				res.status(200).send('success');
+				res.status(200).send({msg:'success'});
 			}
 		});
 	}

@@ -21,8 +21,9 @@ rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 boxes = face_recognition.face_locations(rgb,
 	model=args["detection_method"])
 encodings = face_recognition.face_encodings(rgb, boxes)
-
-if encodings:
+if encodings and len(encodings) == 1:
     print("face detected")
+elif len(encodings) > 1:
+    print("multiple faces detected")
 else:
     print("no face detected")

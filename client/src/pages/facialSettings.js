@@ -45,6 +45,9 @@ export default class Facial extends Component {
 						if (result.data === 'Image Successfully Uploaded') {
 							this.setState({ alert1: true });
 						}
+						else if (result.data === 'Multiple person detected, upload an image with a single person'){
+							this.setState({ status: 'Multiple person detected, upload an image with a single person', isloading: false, alert2: true });
+						}
 						else {
 							this.setState({ alert2: true });
 						}
