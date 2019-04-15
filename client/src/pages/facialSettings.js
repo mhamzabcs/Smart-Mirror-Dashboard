@@ -28,6 +28,10 @@ export default class Facial extends Component {
 	}
 
 	uploadHandler = () => {
+		if(!this.state.selectedFile){
+			this.setState({ alert2: true, status: 'Please select an image first.' });
+			return;
+		}
 		const validImageTypes = ['image/jpeg', 'image/png'];
 		if (validImageTypes.includes(this.state.fileType)) {
 			if (this.state.fileSize < 5242880) {
@@ -43,16 +47,19 @@ export default class Facial extends Component {
 					.then((result) => {
 						console.log(result.data);
 						if (result.data === 'Image Successfully Uploaded') {
-							this.setState({ alert1: true });
+							this.setState({ alert1: true, status: result.data, isloading: false });
 						}
 						else if (result.data === 'Multiple person detected, upload an image with a single person'){
-							this.setState({ status: 'Multiple person detected, upload an image with a single person', isloading: false, alert2: true });
+							this.setState({ alert2: true, status: 'Multiple person detected, upload an image with a single person', isloading: false });
 						}
 						else {
-							this.setState({ alert2: true });
+							this.setState({ alert2: true, status: result.data, isloading: false });
 						}
-						this.setState({ status: result.data, isloading: false });
 					})
+					.catch(error => {
+			         	console.log(error);
+			         	this.setState({status:error.message, isloading:false, alert2:true})
+					});
 			}
 			else {
 				this.setState({ status: 'File size too large', isloading: false, alert2: true });

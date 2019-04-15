@@ -3,6 +3,7 @@ import axios from 'axios';
 import {Link} from 'react-router-dom';
 import history from '../history';
 import Loader from '../components/Loader';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 let localStatus = '';
 
@@ -18,6 +19,8 @@ export default class Register extends Component {
           password2: '',
           email: '',
           errorList: [],
+          status:'',
+          alert2:false,
           isloading:false
         }
         localStatus = localStorage.getItem('userStatus');
@@ -42,17 +45,25 @@ export default class Register extends Component {
           .then((result) => {
           	this.setState({isloading : false});
 			console.log(result);          	
-          	if(result.data === 'success'){
+          	if(result.data.msg === 'success'){
           		localStorage.setItem('userName', username);
           		this.generateSuccessTemp();
           	}
-
           	else{
           		console.log('errors');
-          		this.setState({ errorList: result.data });
+          		console.log(result.data.msg);
+          		if(result.data[0].msg === 'Username/Email have to be unique' || result.data[0].msg === 'Both passwords must be same'){
+          			this.setState({ status:result.data[0].msg, alert2:true });	
+          		}
+          		else{
+          			this.setState({ errorList: result.data, status:"Please fill all the fields", alert2:true });
+          		}
           	} 
-
-         });
+         })
+         .catch(error => {
+         	console.log(error);
+         	this.setState({status:error.message, isloading:false, alert2:true})
+		 });
 	}
 
 	generateSuccessTemp(){
@@ -107,6 +118,8 @@ export default class Register extends Component {
 			</form>
 
 			<div className='errors'> {this.generateErrorList()} </div>
+
+			<SweetAlert danger title={this.state.status} show={this.state.alert2} onConfirm={() => this.setState({ alert2: false })}/>
 
 			<Loader isloading={this.state.isloading}/>
 			

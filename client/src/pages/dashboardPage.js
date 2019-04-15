@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import '../App.css';
-import {Redirect, Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import history from '../history';
+
 let localName = null;
 
 
@@ -9,10 +10,10 @@ class Dashboard extends Component {
 
 	constructor(props) {
 		super(props);
+		localName = localStorage.getItem('userName');
 	}
   	
   	componentDidMount(){
-  		localName = localStorage.getItem('userName')
   		if (!localName){
   			console.log(localName);
   			console.log('in if')
@@ -21,9 +22,7 @@ class Dashboard extends Component {
   	}
   	
 	render() {
-		
-		
-
+				
 		return (
 				
 			<div className="middleAll">	

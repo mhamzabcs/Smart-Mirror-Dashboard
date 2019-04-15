@@ -19,6 +19,7 @@ class WidgetSettings extends Component {
   			status:'',
   			isloading:false,
   			alert:false,
+  			alert2:false,
   		}
   		localName = localStorage.getItem('userName')
 	}
@@ -29,13 +30,21 @@ class WidgetSettings extends Component {
 
     onSubmit = (e) => {
 		e.preventDefault();
-		this.setState({isloading:true});
         const { w1,w2,w3,w4 } = this.state;
+        if( [w2,w3,w4].indexOf(w1) >= 0 || [w3,w4].indexOf(w2) >= 0 || w3 === w4 ){
+        	this.setState({status:"Duplicate widgets selected: Please choose unique widgets for each position.", alert2:true})
+        	return;
+        }
+        this.setState({isloading:true});
         axios.post('http://apes427.herokuapp.com/users/setting', { w1,w2,w3,w4,username:localName })
           .then((result) => {
           	console.log(result.data);
           	this.setState({status:result.data, isloading:false, alert:true})
-         });
+         })
+         .catch(error => {
+         	console.log(error);
+         	this.setState({status:error.message, isloading:false, alert2:true})
+		 });
     }
 
 	render() {
@@ -92,6 +101,8 @@ class WidgetSettings extends Component {
 
 					        <SweetAlert success title={this.state.status} show={this.state.alert} onConfirm={()=>this.setState({alert:false})}/>
 
+					        <SweetAlert danger title={this.state.status} show={this.state.alert2} onConfirm={() => this.setState({ alert2: false })}/>
+
 						</div>
 
 
@@ -103,7 +114,7 @@ class WidgetSettings extends Component {
 								  <select className="form-control" onChange={this.onChange} id="w1">
 								    <option>Weather</option>
 								    <option>Date And Time</option>
-								    <option>News</option>
+								    <option disabled>News</option>
 								    <option>Reminders</option>
 								    <option>Youtube Player</option>
 								  </select>

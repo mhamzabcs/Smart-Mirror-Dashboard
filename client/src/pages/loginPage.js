@@ -3,6 +3,7 @@ import axios from 'axios';
 import {Link} from 'react-router-dom';
 import history from '../history';
 import Loader from '../components/Loader';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 let localStatus = '';
 
@@ -13,7 +14,8 @@ export default class Login extends Component {
 		this.state = {
           username: '',
           password: '',
-          error: '',
+          status:'',
+          alert2:false,
           isloading:false
         }
         localStatus = localStorage.getItem('userStatus');
@@ -49,7 +51,11 @@ export default class Login extends Component {
           		this.generateError();
           	}
 
-         });
+         })
+         .catch(error => {
+         	console.log(error);
+         	this.setState({ status:error.message, isloading:false, alert2:true })
+		 }); 
 	}
 
 
@@ -59,7 +65,7 @@ export default class Login extends Component {
     }
 
     generateError(){
-		this.setState({ error : 'Invalid username or password'})	
+		this.setState({ status : 'Invalid username or password', alert2:true })	
     }
 
 	render() {
@@ -87,7 +93,7 @@ export default class Login extends Component {
 
 					<br/>
 
-					<div className='errors'> <p>{this.state.error}</p> </div>
+					<SweetAlert danger title={this.state.status} show={this.state.alert2} onConfirm={() => this.setState({ alert2: false })}/>
 
 					<Loader isloading={this.state.isloading}/>
 					
