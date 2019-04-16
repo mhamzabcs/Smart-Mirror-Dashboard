@@ -31,4 +31,60 @@ router.post('/addReminder', function(req, res, next) {
   res.status(200).json({msg:'Reminder added'});
 });
 
+router.post('/getReminders', function(req, res, next) {
+  console.log("In get_reminders");
+  console.log(req.body.username);
+  var db = req.db;
+  var reminderCollection = db.get("reminders");
+  reminderCollection.find({'username':req.body.username}, {}, function(err, reminders){
+    console.log(reminders)
+    if(reminders.length == 0){
+      console.log('no reminders for this user');
+      res.status(200).send({msg:'no reminders'});
+    }
+    else{
+      console.log('reminders for this user exist');
+      console.log(reminders)
+      res.status(200).send(reminders);
+    }
+  })
+});
+
+router.post('/getOneReminder', function(req, res, next) {
+  console.log("In get_reminders");
+  console.log(req.body.id);
+  var db = req.db;
+  var reminderCollection = db.get("reminders");
+  reminderCollection.find({'_id':req.body.id}, {}, function(err, reminders){
+      res.status(200).send(reminders);
+  })
+});
+
+router.post('/deleteReminder', function(req, res, next) {
+  console.log("In del_reminders");
+  console.log(req.body.id);
+  var db = req.db;
+  var reminderCollection = db.get("reminders");
+  reminderCollection.remove( { "_id" : req.body.id } )
+  res.json({msg:'reminder removed'});
+});
+
+
+router.post('/editReminder', function(req, res, next) {
+  console.log("In del_reminders");
+  console.log(req.body.id);
+  var db = req.db;
+  var reminderCollection = db.get("reminders");
+  reminderCollection.update(
+         { _id: req.body.id },{
+           $set: {
+              description:req.body.description,
+              date: req.body.date
+           }
+          }
+         )
+  res.status(200).send({msg:"reminder updated"})
+});
+
+
 module.exports = router;
