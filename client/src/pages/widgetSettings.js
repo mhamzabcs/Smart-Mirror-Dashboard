@@ -114,7 +114,7 @@ class WidgetSettings extends Component {
 								  <select className="form-control" onChange={this.onChange} id="w1">
 								    <option>Weather</option>
 								    <option>Date And Time</option>
-								    <option disabled>News</option>
+								    <option>News</option>
 								    <option>Reminders</option>
 								    <option>Youtube Player</option>
 								  </select>
