@@ -2,10 +2,12 @@ var express = require('express');
 var router = express.Router();
 
 router.post('/login', function(req, res, next) {
+    res.status(200).send({msg:"Trying to Log in!"});
     req.io.emit('login', req.body.username);
 });
 
 router.get('/logout', function(req, res, next) {
+    res.status(200).send({msg:"Trying to Log out!"});
     req.io.emit('logout');
 });
 
@@ -34,8 +36,11 @@ router.post('/getAlarms', function(req, res, next) {
 
 router.post('/sendAlarm', function(req, res, next) {
   const alarm = {
-    day: req.body.day,
-    time: req.body.time,
+    day: req.body.day, 
+    time: req.body.time, 
+    dayNumber: req.body.dayNumber,
+    hours: req.body.hours,
+    minutes: req.body.minutes,
     username: req.body.username
   }
   res.status(200).send('Alarm Sent!');
