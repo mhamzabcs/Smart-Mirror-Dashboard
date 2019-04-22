@@ -112,7 +112,7 @@ export default class Facial extends Component {
 				<br /><br />
 
 				<span>
-					<button onClick={this.uploadHandler} className='btn btn-primary'>Upload!</button>
+					<button onClick={this.uploadHandler} className='btn btn-success'>Upload!</button>
 				</span>
 
 				<span> or </span>
@@ -121,7 +121,7 @@ export default class Facial extends Component {
 					<Link to={{
 						pathname: '/dashboard'
 					}}>
-						<button className="btn btn-danger">Go back to the dashboard</button>
+						<button className="btn btn-info">Go back to the dashboard</button>
 					</Link>
 				</span>
 

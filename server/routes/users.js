@@ -38,7 +38,7 @@ router.post('/upload', upload.single('file', 12), function (req, res, next) {
 		console.log('here 2')
 		var sending = data.toString('utf8');
 		sending = sending.trim()
-		if (sending == 'face detected') {
+		if (sending === 'face detected') {
 			console.log('face detected')
 			cloudinary.v2.uploader.upload(req.file.path, { tags: tags, width: '640' }, function (error, result) {
 			})
@@ -50,7 +50,7 @@ router.post('/upload', upload.single('file', 12), function (req, res, next) {
 			const pythonProcess = spawn('python', [dir]);
 
 		}
-		else if (sending == 'multiple faces detected'){
+		else if (sending === 'multiple faces detected'){
 			res.status(200).send('Multiple person detected, upload an image with a single person');
 		}
 		else {
@@ -130,7 +130,7 @@ router.post('/setting', function (req, res, next) {
 	var widgetCollection = db.get("widgets");
 
 	widgetCollection.find({ username: req.body.username }, {}, function (err, widgets) {
-		if (widgets.length == 0) {
+		if (widgets.length === 0) {
 			console.log('creating settings for this user');
 			widgetCollection.insert({
 				username: req.body.username,
@@ -138,8 +138,10 @@ router.post('/setting', function (req, res, next) {
 				w2: req.body.w2,
 				w3: req.body.w3,
 				w4: req.body.w4
+			}).then(()=>{
+				res.status(200).send('Your setting has been created');
+				req.io.emit('setting');
 			})
-			res.status(200).send('Your setting has been created');
 		}
 		else {
 			console.log('settings for this user exist');
@@ -152,7 +154,10 @@ router.post('/setting', function (req, res, next) {
 					w3: req.body.w3,
 					w4: req.body.w4
 				})
-			res.status(200).send('Your setting has been modified');
+				.then(()=>{
+					res.status(200).send('Your setting has been modified');
+					req.io.emit('setting');
+				})	
 		}
 	})
 });
