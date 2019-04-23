@@ -59,7 +59,7 @@ else:
                         # attempt to match each face in the input image to our known
                         # encodings
                         matches = face_recognition.compare_faces(data["encodings"],
-                                encoding)
+                                encoding, tolerance=0.5)
                         name = "Unknown"
                         # check to see if we have found a match
                         if True in matches:
