@@ -142,7 +142,7 @@ router.post('/deleteAlarm', function(req, res, next) {
 
 
 router.post('/editReminder', function(req, res, next) {
-  console.log("In del_reminders");
+  console.log("In edit_reminder");
   console.log(req.body.id);
   var db = req.db;
   var reminderCollection = db.get("reminders");
@@ -156,6 +156,25 @@ router.post('/editReminder', function(req, res, next) {
          )
   req.io.emit('reminders', { _id:req.body.id });
   res.status(200).send({msg:"reminder updated"});
+});
+
+router.post('/editAlarm', function(req, res, next) {
+  console.log("In edit_alarm");
+  console.log(req.body.id);
+  var db = req.db;
+  var reminderCollection = db.get("alarms");
+  reminderCollection.update(
+         { _id: req.body.id },{
+           $set: {
+              day:req.body.day,
+              time: req.body.time,
+              dayNumber:req.body.dayNumber,
+              hours: req.body.hours,
+              minutes: req.body.minutes,
+           }
+          }
+         )
+  res.status(200).send({msg:"alarm updated"});
 });
 
 
