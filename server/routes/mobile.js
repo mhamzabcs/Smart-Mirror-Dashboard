@@ -111,6 +111,16 @@ router.post('/getOneReminder', function(req, res, next) {
   })
 });
 
+router.post('/getOneAlarm', function(req, res, next) {
+  console.log("In get_one_alarm");
+  console.log(req.body.id);
+  var db = req.db;
+  var alarmCollection = db.get("alarms");
+  alarmCollection.find({'_id':req.body.id}, {}, function(err, alarm){
+      res.status(200).send(alarm);
+  })
+});
+
 router.post('/deleteReminder', function(req, res, next) {
   console.log("In del_reminders");
   console.log(req.body.id);
@@ -119,6 +129,15 @@ router.post('/deleteReminder', function(req, res, next) {
   reminderCollection.remove( { "_id" : req.body.id } )
   res.json({msg:'reminder removed'});
   req.io.emit('reminders', { _id:req.body.id });
+});
+
+router.post('/deleteAlarm', function(req, res, next) {
+  console.log("In del_alarms");
+  console.log(req.body.id);
+  var db = req.db;
+  var alarmCollection = db.get("alarms");
+  alarmCollection.remove( { "_id" : req.body.id } )
+  res.json({msg:'alarm removed'});
 });
 
 
