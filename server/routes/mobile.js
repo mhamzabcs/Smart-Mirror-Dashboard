@@ -17,6 +17,20 @@ router.post('/response', function(req, res, next) {
     req.io.emit(req.body.username, req.body.response);
 });
 
+router.get('/refresh', function(req, res, next) {
+    res.status(200).send({msg:"Request Sent!"});
+    console.log('refresh');
+    req.io.emit('refresh');
+});
+
+
+router.get('/changeState', function(req, res, next) {
+    res.status(200).send({msg:"Request Sent!"});
+    console.log('changeState');
+    req.io.emit('changeState');
+});
+
+
 router.post('/getAlarms', function(req, res, next) {
   console.log("In get_alarms");
   console.log(req.body.username);
