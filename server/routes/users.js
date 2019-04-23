@@ -130,20 +130,7 @@ router.post('/setting', function (req, res, next) {
 	var widgetCollection = db.get("widgets");
 
 	widgetCollection.find({ username: req.body.username }, {}, function (err, widgets) {
-		if (widgets.length === 0) {
-			console.log('creating settings for this user');
-			widgetCollection.insert({
-				username: req.body.username,
-				w1: req.body.w1,
-				w2: req.body.w2,
-				w3: req.body.w3,
-				w4: req.body.w4
-			}).then(()=>{
-				res.status(200).send('Your setting has been created');
-				req.io.emit('setting');
-			})
-		}
-		else {
+		if (widgets && widgets.length !== 0) {
 			console.log('settings for this user exist');
 			widgetCollection.update(
 				{ username: req.body.username },
@@ -157,7 +144,20 @@ router.post('/setting', function (req, res, next) {
 				.then(()=>{
 					res.status(200).send('Your setting has been modified');
 					req.io.emit('setting');
-				})	
+				})
+		}
+		else {
+			console.log('creating settings for this user');
+			widgetCollection.insert({
+				username: req.body.username,
+				w1: req.body.w1,
+				w2: req.body.w2,
+				w3: req.body.w3,
+				w4: req.body.w4
+			}).then(()=>{
+				res.status(200).send('Your setting has been created');
+				req.io.emit('setting');
+			})	
 		}
 	})
 });

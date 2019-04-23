@@ -6,14 +6,15 @@ router.post('/login', function(req, res, next) {
     req.io.emit('login', req.body.username);
 });
 
-router.get('/logout', function(req, res, next) {
+router.post('/logout', function(req, res, next) {
     res.status(200).send({msg:"Trying to Log out!"});
-    req.io.emit('logout');
+    req.io.emit('logout', req.body.username);
 });
 
 router.post('/response', function(req, res, next) {
     res.status(200).send("Response Sent!");
-    req.io.emit('response', req.body.response);
+    console.log("username? "+req.body.username);
+    req.io.emit(req.body.username, req.body.response);
 });
 
 router.post('/getAlarms', function(req, res, next) {
@@ -23,13 +24,13 @@ router.post('/getAlarms', function(req, res, next) {
   var alarmsCollection = db.get("alarms");
   alarmsCollection.find({'username':req.body.username}, {}, function(err, alarms){
     console.log(alarms)
-    if(alarms.length === 0){
-      console.log('no alarms for this user');
-      res.status(200).send({msg:'no alarms'});
-    }
-    else{
+    if(alarms && alarms.length !== 0){
       console.log('alarms for this user exist');
       res.status(200).send(alarms);
+    }
+    else{
+      console.log('no alarms for this user');
+      res.status(200).send({msg:'no alarms'});
     }
   })
 });
@@ -74,14 +75,14 @@ router.post('/getReminders', function(req, res, next) {
   var reminderCollection = db.get("reminders");
   reminderCollection.find({'username':req.body.username}, {}, function(err, reminders){
     console.log(reminders)
-    if(reminders.length === 0){
-      console.log('no reminders for this user');
-      res.status(200).send({msg:'no reminders'});
-    }
-    else{
+    if(reminders && reminders.length !== 0){
       console.log('reminders for this user exist');
       console.log(reminders)
       res.status(200).send(reminders);
+    }
+    else{
+      console.log('no reminders for this user');
+      res.status(200).send({msg:'no reminders'});
     }
   })
 });
