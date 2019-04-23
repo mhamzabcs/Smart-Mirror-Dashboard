@@ -7,6 +7,9 @@ var User = require('../models/user');
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy;
 
+var nodemailer = require('nodemailer');
+
+
 cloudinary.config({
 	cloud_name: 'dgq7bff58',
 	api_key: '859866388255326',
@@ -50,7 +53,7 @@ router.post('/upload', upload.single('file', 12), function (req, res, next) {
 			const pythonProcess = spawn('python', [dir]);
 
 		}
-		else if (sending === 'multiple faces detected'){
+		else if (sending === 'multiple faces detected') {
 			res.status(200).send('Multiple person detected, upload an image with a single person');
 		}
 		else {
@@ -107,15 +110,15 @@ router.post('/register', function (req, res, next) {
 			if (err) {
 				console.log('hehe');
 				console.log(err);
-				
+
 				var msgs = {
-					msg:'Username/Email have to be unique'
+					msg: 'Username/Email have to be unique'
 				}
 				var errors = [msgs];
 				res.status(200).send(errors);
 			}
 			else {
-				res.status(200).send({msg:'success'});
+				res.status(200).send({ msg: 'success' });
 			}
 		});
 	}
@@ -141,7 +144,7 @@ router.post('/setting', function (req, res, next) {
 					w3: req.body.w3,
 					w4: req.body.w4
 				})
-				.then(()=>{
+				.then(() => {
 					res.status(200).send('Your setting has been modified');
 					req.io.emit('setting');
 				})
@@ -154,10 +157,10 @@ router.post('/setting', function (req, res, next) {
 				w2: req.body.w2,
 				w3: req.body.w3,
 				w4: req.body.w4
-			}).then(()=>{
+			}).then(() => {
 				res.status(200).send('Your setting has been created');
 				req.io.emit('setting');
-			})	
+			})
 		}
 	})
 });
@@ -214,5 +217,97 @@ passport.deserializeUser(function (id, done) {
 	});
 });
 
+router.post('/reset', function (req, res, next) {
+	console.log('inside reset');
+	console.log(req.body);
+	var verifying_str = "";
+	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	for (var i = 0; i < 5; i++) {
+		verifying_str += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	console.log(verifying_str);
+	var db = req.db;
+	var userCollection = db.get('smartusers');
+	userCollection.update({ email: req.body.email }, { $set: { forgotPassToken: verifying_str } }, function (err, writeResult) {
+		console.log(writeResult);
+		if (writeResult.nModified === 1) {
+			var transporter = nodemailer.createTransport({
+				service: 'gmail',
+				auth: {
+					user: 'mhamza2797@gmail.com',
+					pass: 'proton27'
+				}
+			});
+			var mailOptions = {
+				from: 'mhamza2797@gmail.com',
+				to: req.body.email,
+				subject: 'Reset password',
+				text: 'Use this link to reset your password: ' + 'http://sm-fyp.herokuapp.com/changePassword/' + verifying_str
+			};
+
+			transporter.sendMail(mailOptions, function (error, info) {
+				if (error) {
+					console.log(error);
+				} else {
+					console.log('Email sent: ' + info.response);
+					res.status(200).send({ msg: "check mail" });
+				}
+			});
+		}
+		else {
+			res.status(200).send({ msg: "mail doesnt exist" });
+		}
+	})
+});
+
+router.post('/verify', function (req, res, next) {
+	console.log('in verify');
+	var db = req.db;
+	var userCollection = db.get('smartusers');
+	userCollection.find({ forgotPassToken: req.body.token }, function (err, users) {
+		console.log(users);
+		if(users[0] && users){
+			console.log('in');
+			res.status(200).send({email:users[0].email})	
+		}
+		else{
+			res.status(401).send({msg:"unauthorized"})		
+		}
+	})
+});
+
+router.post('/updatePassword', function(req,res){
+	console.log(req.body);
+
+	var passwordRequired = 'Password required';
+	var passwordSame = 'Both passwords must be same';
+
+	req.checkBody('password', passwordRequired).notEmpty();
+	req.checkBody('password2', passwordSame).equals(req.body.password);
+
+	var errors = req.validationErrors();
+	if (errors) {
+		console.log(errors);
+		res.status(200).send(errors);
+	}
+	else {
+		var user = {
+			email: req.body.email,
+			password: req.body.password
+		}
+		User.changePassword(user, function (err, user) {
+			console.log('back');
+			console.log(err)
+			console.log(user)
+			if (err) {
+				console.log('hehe');
+				console.log(err);
+			}
+			else {
+				res.status(200).send({ msg: 'success' });
+			}
+		});
+	}
+});
 
 module.exports = router;

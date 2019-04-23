@@ -45,7 +45,7 @@ router.post('/sendAlarm', function(req, res, next) {
     username: req.body.username
   }
   res.status(200).send('Alarm Sent!');
-  req.io.emit('alarms', alarm);
+  req.io.emit(req.body.username + ' alarms', alarm);
 });
 
 router.post('/addReminder', function(req, res, next) {

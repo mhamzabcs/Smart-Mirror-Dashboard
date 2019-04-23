@@ -8,6 +8,8 @@ import dashboard from './pages/dashboardPage.js';
 import widget from './pages/widgetSettings.js';
 import facial from './pages/facialSettings.js';
 import logout from './pages/logoutPage.js'
+import forgotPassword from './pages/forgotPassword.js'
+import changePassword from './pages/changePassword.js'
 
 class App extends Component { 
   render() {
@@ -21,6 +23,8 @@ class App extends Component {
             <Route path="/widget" component={widget}/>
             <Route path="/facial" component={facial}/>
             <Route path="/logout" component={logout}/>
+            <Route path="/forgotPassword" component={forgotPassword}/>
+            <Route path="/changePassword/:token" component={changePassword}/>
           </Switch>
         </Router>  
     );

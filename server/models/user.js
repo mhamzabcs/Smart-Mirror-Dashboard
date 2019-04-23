@@ -52,3 +52,19 @@ module.exports.createUser =  function(newUser, callback){
         console.log('udhar')
     });
 }
+
+
+module.exports.changePassword =  function(newUser, callback){
+    bcrypt.hash(newUser.password, 10, function(err, hash){
+        console.log('in bcrypt')
+        console.log(newUser);
+        console.log(hash);
+        newUser.password = hash;
+        User.findOne({email: newUser.email}, function (err, user) {
+            console.log(user)
+            user.password = newUser.password;
+            console.log(user)
+            user.save(callback);
+        });
+    });
+}

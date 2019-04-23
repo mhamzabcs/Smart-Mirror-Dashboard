@@ -36,7 +36,7 @@ class WidgetSettings extends Component {
         	return;
         }
         this.setState({isloading:true});
-        axios.post('http://localhost:5000/users/setting', { w1,w2,w3,w4,username:localName })
+        axios.post('http://apes427.herokuapp.com/users/setting', { w1,w2,w3,w4,username:localName })
           .then((result) => {
           	console.log(result.data);
           	this.setState({status:result.data, isloading:false, alert:true})
